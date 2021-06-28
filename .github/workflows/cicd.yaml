@@ -14,10 +14,12 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps: 
-      - name: Print some github variables
+      - name: Step that prints name of pull request's base branch
+        if: github.event_name == 'pull_request'
         run: |
-          echo "This is release $GITHUB_BASE_REF"
-          echo "This is main $GITHUB_REF"
+          echo "Pull request's base branch is: ${BASE_BRANCH}"
+        env:
+          BASE_BRANCH: ${{ github.base_ref }}
 
       - name: Get Release version
         if: github.ref == 'refs/heads/main' && contains(github.head_ref,'release') #startsWith(github.head_ref, 'refs/heads/release')
