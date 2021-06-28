@@ -16,7 +16,7 @@ jobs:
     steps:
 
       - name: echo PR name
-        run: echo ${{ github.head_ref }}
+        run: echo ${{ github.event.pull_request.head.ref }}
 
       - name: Get Release version
         if: github.ref == 'refs/heads/main' && contains(github.head_ref,'release') #startsWith(github.head_ref, 'refs/heads/release')
