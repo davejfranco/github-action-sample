@@ -20,7 +20,7 @@ jobs:
         uses: tj-actions/branch-names@v4.3
       
       - name: Get Head Ref branch name
-        if: github.event_name == 'pull_request'
+        #if: github.event_name == 'pull_request'
         run: |
           echo "${{ steps.branch-name.outputs.head_ref_branch }}"
 
