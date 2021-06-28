@@ -15,8 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: echo PR name
-        run: echo ${{ github.event.pull_request.head.ref }}
+      - name: Get branch names
+        id: branch-name
+        uses: tj-actions/branch-names@v4.3
+      
+      - name: Get Head Ref branch name
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "${{ steps.branch-name.outputs.head_ref_branch }}"
 
       - name: Get Release version
         if: github.ref == 'refs/heads/main' && contains(github.head_ref,'release') #startsWith(github.head_ref, 'refs/heads/release')
