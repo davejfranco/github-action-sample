@@ -1,0 +1,23 @@
+name: CI/CD pipeline
+
+on:
+  push: # Runs on every push to main branch
+    branches:
+      - main
+    tags:
+      - "*.*.*"
+
+env:
+  IMAGE_NAME: "penneo/integrations-silverfin/app"
+  REGISTRY_HOST: "registry.penneo.com"
+
+jobs:
+  #
+  # Build the app TS to JS
+  #
+  build-code:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v2
