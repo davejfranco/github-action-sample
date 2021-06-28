@@ -3,21 +3,38 @@ name: CI/CD pipeline
 on:
   push: # Runs on every push to main branch
     branches:
-      - main
-    tags:
-      - "*.*.*"
-
-env:
-  IMAGE_NAME: "penneo/integrations-silverfin/app"
-  REGISTRY_HOST: "registry.penneo.com"
+      - develop
 
 jobs:
   #
   # Build the app TS to JS
   #
-  build-code:
+  build-docker:
     runs-on: ubuntu-latest
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v2
+      
+      - name: docker build
+        run: |
+          docker build -t davejfranco/oci-action-api .
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build-docker
+    if: containts(github.ref, 'refs/tags')
+    steps:
+    - name: Bump version and push tag
+      id: tag_version
+      uses: mathieudutour/github-tag-action@v5.5
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create a GitHub release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.tag_version.outputs.new_tag }}
+        release_name: Release ${{ steps.tag_version.outputs.new_tag }}
+        body: ${{ steps.tag_version.outputs.changelog }}
+
