@@ -2,6 +2,9 @@ name: CI/CD pipeline
 
 on:
   push: 
+    branches:
+      - release/*
+      - main
 
 jobs:
 
