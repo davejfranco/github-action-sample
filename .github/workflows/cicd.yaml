@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
       - name: Step that prints name of pull request's base branch
-        if: github.event_name == 'pull_request'
         run: |
           echo "Pull request's base branch is: ${BASE_BRANCH}"
         env:
