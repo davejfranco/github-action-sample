@@ -13,12 +13,16 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    steps: 
-      - name: Step that prints name of pull request's base branch
-        run: |
-          echo "Pull request's base branch is: ${BASE_BRANCH}"
-        env:
-          BASE_BRANCH: ${{ github.base_ref }}
+    steps:
+
+      - name: get PR branch name
+        uses: mdecoleman/pr-branch-name@1.0.1
+        id: vars
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: echo PR name
+        run: echo ${{ steps.vars.outputs.branch }}
 
       - name: Get Release version
         if: github.ref == 'refs/heads/main' && contains(github.head_ref,'release') #startsWith(github.head_ref, 'refs/heads/release')
