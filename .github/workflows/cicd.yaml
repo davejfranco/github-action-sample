@@ -23,7 +23,7 @@ jobs:
     needs: build-docker
     steps: 
       - name: Get Release version
-        if: startsWith(github.event.pull_request.head.ref, 'release')
+        if: github.ref == 'refs/heads/release/*'
         id: release_version
         run: |
           echo "RELEASE=$(echo ${GITHUB_HEAD_REF} | cut -d'/' -f4)" >> $GITHUB_ENV
