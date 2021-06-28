@@ -3,13 +3,12 @@ name: CI/CD pipeline
 on:
   push: 
     branches:
-      - release/*
       - main
+      - release/*     
   pull_request:
     branches: 
       - main
-    types: [closed]
-
+      - release/*
 jobs:
 
   release:
