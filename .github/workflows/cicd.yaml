@@ -16,8 +16,8 @@ jobs:
     steps: 
       - name: Print some github variables
         run: |
-          echo "$GITHUB_HEAD_REF"
-          echo "$GITHUB_REF"
+          echo "This is release $GITHUB_HEAD_REF"
+          echo "This is main $GITHUB_REF"
 
       - name: Get Release version
         if: github.ref == 'refs/heads/main' && contains(github.head_ref,'release') #startsWith(github.head_ref, 'refs/heads/release')
