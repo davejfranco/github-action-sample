@@ -3,7 +3,9 @@ name: CI/CD pipeline
 on:
   push: # Runs on every push to main branch
     branches:
-      - develop
+      - main
+    tags:
+      - "*.*.*"
 
 jobs:
   #
@@ -25,6 +27,7 @@ jobs:
     if: containts(github.ref, 'refs/tags')
     steps:
     - name: Bump version and push tag
+      if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release')
       id: tag_version
       uses: mathieudutour/github-tag-action@v5.5
       with:
