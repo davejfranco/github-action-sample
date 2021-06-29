@@ -61,8 +61,8 @@ jobs:
           else
              echo ""::set-output name=release::false"
           fi
-          
-      - run: echo "${{ step.is_release.outputs.release }}" 
+
+      - run: echo "${{ steps.is_release.outputs.release }}" 
       
       - name: Get Release version
         id: version
