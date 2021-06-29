@@ -71,6 +71,8 @@ jobs:
           VERSION=$(cat package.json | jq -r .version)
           echo ::set-output name=version::$VERSION
 
+      - run: echo "${{ steps.version.outputs.version }}"
+      
       - name: Create tag
         if: steps.is_release.outputs.release == 'true'
         uses: actions/github-script@v3
