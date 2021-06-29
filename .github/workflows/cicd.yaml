@@ -66,8 +66,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+      - uses: actions/checkout@v2
+      - uses: tonynguyenit18/github-action-custom-vars@v1
+      
       - name: Get Release version
-        uses: tonynguyenit18/github-action-custom-vars@v1
         id: release_version
         if: github.ref == 'refs/heads/main'
         run: |
