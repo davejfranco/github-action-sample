@@ -59,6 +59,8 @@ jobs:
             RELEASE='true'
             echo ::set-output name=release::$RELEASE
           fi
+             
+      - run: echo ${{ steps.is_release.outputs.release }}
       
       - name: Get Release version
         id: version
