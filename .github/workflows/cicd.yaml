@@ -59,18 +59,18 @@ jobs:
             RELEASE='true'
             echo ::set-output name=release::$RELEASE
           fi
-             
-      - run: echo ${{ steps.is_release.outputs.release }}
+
+      - run: echo ::steps.is_release.outputs.release
       
       - name: Get Release version
         id: version
-        if: ${{ steps.is_release.outputs.release == 'true' }}
+        if: steps.is_release.outputs.release == 'true'
         run: |
           VERSION=$(cat package.json | jq -r .version)
           echo ::set-output name=version::$VERSION
 
       - name: Create tag
-        if: ${{ steps.is_release.outputs.release == 'true' }}
+        if: steps.is_release.outputs.release == 'true'
         uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
