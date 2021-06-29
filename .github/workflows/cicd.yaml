@@ -24,7 +24,7 @@ jobs:
 
       - name: Get Release version
         id: release_version
-        if: github.ref == 'refs/heads/main' #startsWith(github.head_ref, 'refs/heads/release')
+        if: github.ref == 'refs/heads/main'
         run: |
 
           if [[ $RECENT_MERGED_BRANCH_NAME =~ "release" ]]; then
