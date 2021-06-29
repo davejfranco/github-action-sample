@@ -57,11 +57,12 @@ jobs:
         run: |
           echo $(cat branch.txt)
           if [[ $(cat branch.txt) == *"release"* ]]; then
-            RELEASE='true'
-            echo ::set-output name=release::$RELEASE
+            echo ""::set-output name=release::true"
+          else
+             echo ""::set-output name=release::false"
           fi
-
-      - run: echo ::steps.is_release.outputs.release
+          
+      - run: echo "${{ step.is_release.outputs.release }}" 
       
       - name: Get Release version
         id: version
