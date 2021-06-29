@@ -71,6 +71,7 @@ jobs:
       - name: print ref 
         run: |
           echo "${{ github.ref }}"
+          echo "${{ github.head_ref }}"
 
 
 
