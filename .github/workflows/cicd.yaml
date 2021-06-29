@@ -69,7 +69,6 @@ jobs:
     steps:
 
       - name: print ref 
-        if: steps.release_version.outputs.version
         run: |
           echo "${{ github.ref }}"
 
