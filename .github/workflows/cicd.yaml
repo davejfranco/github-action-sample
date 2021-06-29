@@ -56,7 +56,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           echo $(cat branch.txt)
-          if [[ $(cat branch.txt) == "release" ]]; then
+          if [[ $(cat branch.txt) == *"release"* ]]; then
             RELEASE='true'
             echo ::set-output name=release::$RELEASE
           fi
