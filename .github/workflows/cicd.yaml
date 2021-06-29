@@ -2,8 +2,7 @@ name: CI/CD pipeline
 
 on:
   push: 
-    branches:
-      - '*'   
+
   pull_request:
     types: [closed]
     branches:
@@ -11,38 +10,65 @@ on:
     
 jobs:
 
-  # build-docker:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v2
-      
-  #     - name: docker build
-  #       run: |
-  #         docker build -t davejfranco/oci-action-api .
-
-  release:
+  build-code:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      
+      # - name: docker build
+      #   run: |
+      #     docker build -t davejfranco/oci-action-api .
+      - name: Upload package.json
+        uses: actions/upload-artifact@v2
+        with:
+          name: package
+          path: package.json
+          retention-days: 1
 
       - uses: tonynguyenit18/github-action-custom-vars@v1
-      - run: echo $RECENT_MERGED_BRANCH_NAME
+      - run: echo $RECENT_MERGED_BRANCH_NAME > branch.txt
 
-      - run: echo $RECENT_MERGED_BRANCH_NAME
+      - name: Upload source branch #This will identify is the source branch is release, and will trigger both automatice release and prod deployment
+        uses: actions/upload-artifact@v2
+        with:
+          name: branch
+          path: branch.txt
+          retention-days: 1
 
-      - name: Get Release version
-        id: release_version
+  release:
+    runs-on: ubuntu-latest
+    needs: build-code
+    steps:
+
+      - name: Download branch file
+        uses: actions/download-artifact@v2
+        with:
+          name: package
+
+      - name: Download branch file
+        uses: actions/download-artifact@v2
+        with:
+          name: branch
+
+      - name: Check if release
+        id: is_release
         if: github.ref == 'refs/heads/main'
         run: |
-          if [[ $RECENT_MERGED_BRANCH_NAME =~ "release" ]]; then
-            export RELEASE_VERSION=$(echo $RECENT_MERGED_BRANCH_NAME | cut -d'/' -f2)
-            echo ::set-output name=version::$RELEASE_VERSION
+          if [[ $(cat branch.txt) == "release" ]]; then
+            RELEASE='true'
+            echo ::set-output name=release::$RELEASE
           fi
+      
+      - name: Get Release version
+        id: version
+        if: ${{ steps.is_release.outputs.release == 'true' }}
+        run: |
+          VERSION=$(cat package.json | jq -r .version)
+          echo ::set-output name=version::$VERSION
 
       - name: Create tag
-        if: steps.release_version.outputs.version
+        if: ${{ steps.is_release.outputs.release == 'true' }}
         uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -50,38 +76,35 @@ jobs:
             github.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: "refs/tags/${{ steps.release_version.outputs.version }}",
+              ref: "refs/tags/${{ steps.version.outputs.version }}",
               sha: context.sha
             })
 
       - name: Create a GitHub release
-        if: steps.release_version.outputs.version
+        if: steps.version.outputs.version
         uses: ncipollo/release-action@v1
         with:
-          tag: "${{ steps.release_version.outputs.version }}"
+          tag: "${{ steps.version.outputs.version }}"
           token: ${{ secrets.GITHUB_TOKEN }}
       
-  prod_deployment:
-    needs: release
-    runs-on: ubuntu-latest
-    steps:
+  # prod_deployment:
+  #   needs: release
+  #   runs-on: ubuntu-latest
+  #   steps:
 
-      - uses: actions/checkout@v2
-      - uses: tonynguyenit18/github-action-custom-vars@v1
-      
-      - name: Get Release version
-        id: release_version
-        if: github.ref == 'refs/heads/main'
-        run: |
-          if [[ $RECENT_MERGED_BRANCH_NAME =~ "release" ]]; then
-            export RELEASE_VERSION=$(echo $RECENT_MERGED_BRANCH_NAME | cut -d'/' -f2)
-            echo ::set-output name=version::$RELEASE_VERSION
-          fi
+  #     - name: Get Release version
+  #       id: release_version
+  #       if: github.ref == 'refs/heads/main'
+  #       run: |
+  #         if [[ $RECENT_MERGED_BRANCH_NAME =~ "release" ]]; then
+  #           export RELEASE_VERSION=$(echo $RECENT_MERGED_BRANCH_NAME | cut -d'/' -f2)
+  #           echo ::set-output name=version::$RELEASE_VERSION
+  #         fi
 
-      - name: Deploy
-        id: deploy_prod
-        if: steps.release_version.outputs.version
-        run: echo "This is a deployment"
+  #     - name: Deploy
+  #       id: deploy_prod
+  #       if: steps.release_version.outputs.version
+  #       run: echo "This is a deployment"
   
     
 
