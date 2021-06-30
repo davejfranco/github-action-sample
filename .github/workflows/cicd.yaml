@@ -2,12 +2,11 @@ name: CI/CD pipeline
 
 on:
   push: 
-
-  pull_request:
-    types: [closed]
     branches:
-      - master
-    
+      - main
+    tags:
+      - "*.*.*"
+      
 jobs:
 
   build-code:
