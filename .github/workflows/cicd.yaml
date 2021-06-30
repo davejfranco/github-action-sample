@@ -92,25 +92,35 @@ jobs:
         with:
           tag: "${{ steps.version.outputs.version }}"
           token: ${{ secrets.GITHUB_TOKEN }}
-      
-  # prod_deployment:
-  #   needs: release
-  #   runs-on: ubuntu-latest
-  #   steps:
 
-  #     - name: Get Release version
-  #       id: release_version
-  #       if: github.ref == 'refs/heads/main'
-  #       run: |
-  #         if [[ $RECENT_MERGED_BRANCH_NAME =~ "release" ]]; then
-  #           export RELEASE_VERSION=$(echo $RECENT_MERGED_BRANCH_NAME | cut -d'/' -f2)
-  #           echo ::set-output name=version::$RELEASE_VERSION
-  #         fi
+  dev_deployment:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
 
-  #     - name: Deploy
-  #       id: deploy_prod
-  #       if: steps.release_version.outputs.version
-  #       run: echo "This is a deployment"
+      - name: Deploy
+        id: deploy_dev
+        if: steps.release_version.outputs.version
+        run: echo "This is a deployment"
+
+  prod_deployment:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Get Release version
+        id: release_version
+        if: github.ref == 'refs/heads/main'
+        run: |
+          if [[ $RECENT_MERGED_BRANCH_NAME =~ "release" ]]; then
+            export RELEASE_VERSION=$(echo $RECENT_MERGED_BRANCH_NAME | cut -d'/' -f2)
+            echo ::set-output name=version::$RELEASE_VERSION
+          fi
+
+      - name: Deploy
+        id: deploy_prod
+        if: steps.release_version.outputs.version
+        run: echo "This is a deployment"
   
     
 
