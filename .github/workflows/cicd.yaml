@@ -54,7 +54,7 @@ jobs:
         id: is_release
         if: github.ref == 'refs/heads/main'
         run: |
-          if cat branch.txt | grep -q "release"; then
+          if grep -q "release" branch.txt; then
             echo ""::set-output name=release::true"
           fi
 
