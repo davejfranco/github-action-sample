@@ -96,7 +96,6 @@ jobs:
 
       - name: Deploy
         id: deploy_dev
-        if: steps.release_version.outputs.version
         run: echo "This is a deployment"
 
   prod_deployment:
@@ -118,9 +117,8 @@ jobs:
         id: is_release
         if: github.ref == 'refs/heads/main'
         run: |
-          echo $(cat branch.txt)
-          if [[ $(cat branch.txt) == *"release"* ]]; then
-            echo ""::set-output name=release::true"
+          if grep -q "release" branch.txt; then
+            echo ::set-output name=release::true
           fi
 
       - name: Deploy
