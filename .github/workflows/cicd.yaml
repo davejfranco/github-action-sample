@@ -15,9 +15,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       
-      # - name: docker build
-      #   run: |
-      #     docker build -t davejfranco/oci-action-api .
+      - name: docker build
+        run: |
+          docker build -t davejfranco/oci-action-api .
+          
       - name: Upload package.json
         uses: actions/upload-artifact@v2
         with:
