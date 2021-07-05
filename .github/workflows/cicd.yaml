@@ -18,6 +18,9 @@ jobs:
       # - name: docker build
       #   run: |
       #     docker build -t davejfranco/oci-action-api .
+      - name: print source branch 
+        run: echo ${{ github.head_ref }}
+        
       - name: Upload package.json
         uses: actions/upload-artifact@v2
         with:
