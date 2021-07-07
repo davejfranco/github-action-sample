@@ -28,7 +28,7 @@ jobs:
           path: package.json
           retention-days: 1
 
-      - uses: tonynguyenit18/github-action-custom-vars@v1
+      - uses: penneo/github-action-custom-vars@v1
       - run: echo $RECENT_MERGED_BRANCH_NAME > branch.txt
 
       - name: Upload source branch #This will identify is the source branch is release, and will trigger both automatice release and prod deployment
