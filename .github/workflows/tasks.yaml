@@ -13,6 +13,21 @@ jobs:
   say_hello:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          which aws
-          which kubectl
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-1
+      
+      - name: Execute command
+        run: |
+          base64 -d <<< "$KUBE_CONFIG_DATA" > .kubeconfig
+          chmod og-rwx .kubeconfig
+          export KUBECONFIG=.kubeconfig
+          echo "${{ github.event.inputs.namespace }}"
+          echo "executing command"
+          "${{ github.event.inputs.command }}" -n "${{ github.event.inputs.namespace }}"
+        env:
+          KUBE_CONFIG_DATA: '${{ secrets.KUBE_CONFIG_DATA }}'
