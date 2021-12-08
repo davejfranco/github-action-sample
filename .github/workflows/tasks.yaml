@@ -23,10 +23,7 @@ jobs:
       
       - name: Execute command
         run: |
-          base64 -d <<< "$KUBE_CONFIG_DATA" > .kubeconfig
-          chmod og-rwx .kubeconfig
-          export KUBECONFIG=.kubeconfig
-          echo "${{ github.event.inputs.namespace }}"
+          aws eks --region eu-west-1 update-kubeconfig --name tech-interview-cluster
           echo "executing command"
           "${{ github.event.inputs.command }}" -n "${{ github.event.inputs.namespace }}"
         env:
